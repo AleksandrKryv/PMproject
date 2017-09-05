@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% load thumbnail %}
+
+{% block main %}
+    <div class="container">
+        <nav class="navbar navbar-default ">
+            <div class="container">
+                <ul class="nav navbar-nav ">
+                    <li><a href="" onClick="javascript:history.go(-1);">Back</a></li>
+                    <li><a href="">Back</a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <form action="{% url 'portfoliophoto' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+
+            {% for alb in album_list %}
+                {% for photo in alb.photo.all %}
+
+                <div class="col-sm-4">
+
+                    <div class="checkbox">
+
+                            <label style="text-align: left">
+                             <input type="checkbox" name="photochoice" value="{{ photo.id }}"
+                                           id="alb_{{ photo.id }}">
+                            <div class="card">
+                                {% thumbnail photo.image "450x300" crop="center"  as im %}
+
+
+                                    <img class="img-responsive" src="{{ MEDIA_URL }}{{ im }}">
+
+
+
+
+
+
+                                {% endthumbnail %}
+                             </div>
+                            </label>
+
+
+
+                    </div>
+                </div>
+
+                    {% endfor %}
+            {% endfor %}
+            <div>
+                <button type="submit" name="add" class="btn btn-success">Add photo</button>
+
+            </div>
+
+        </div>
+    </form>
+{% endblock %}

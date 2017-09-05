@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% load thumbnail %}
+{% block main %}
+    <div class="container">
+        <nav class="navbar navbar-default ">
+            <div class="container">
+                <ul class="nav navbar-nav ">
+                    <li><a href="" onClick="javascript:history.go(-1);">Back</a></li>
+                    <li><a href="">Back</a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <form action="{% url 'portfoliophotodelete' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+
+                {% for photo in user.portfolio.photo.all %}
+
+                <div class="col-sm-4">
+                    <div class="checkbox">
+                                                                            <div class="card" style="box-shadow: 5px 6px 8px 0 rgba(0, 0, 0, 0.2);">
+
+                            <label style="">
+                             <input type="checkbox" name="photochoice" value="{{ photo.id }}" id="alb_{{ photo.id }}">
+
+                                {% thumbnail photo.image "450x300" crop="center" padding=True as im %}
+
+
+                                    <img class="img-responsive" src="{{ MEDIA_URL }}{{ im }}">
+
+
+
+
+
+
+                                {% endthumbnail %}
+                                                        <div class="row">
+    <div class="col-sm-6">
+    <h4 class="text-success" style="margin-left: 10px"> <span class="glyphicon glyphicon-thumbs-up"></span> {{ photo.rating }}</h4>
+   </div>
+    <div class="col-sm-6">
+    <h4 class="text-danger" style="margin-right: 10px; text-align: right"> <span class="glyphicon glyphicon-thumbs-down"></span> {{ photo.rating }}</h4>
+</div>
+</div>
+
+                            </label>
+        </div>
+
+
+                    </div>
+                </div>
+
+            {% endfor %}
+            <div>
+                <button type="submit" name="add" class="btn btn-danger">Delete photo</button>
+
+            </div>
+
+        </div>
+    </form>
+{% endblock %}

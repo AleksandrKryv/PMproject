@@ -1,0 +1,202 @@
+{% extends "layout.html" %}
+{% load thumbnail %}
+{% block main %}
+    <div class="container">
+        <nav class="navbar navbar-default  ">
+            <div class="container">
+                <ul class="nav navbar-nav ">
+
+
+                    <li><a href="{% url 'addalbum' %}">Add new album</a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <div class="row">
+            {% for alb in album_list %}
+
+                <div class="col-sm-4">
+
+
+                    <div class="card" style="box-shadow: 5px 6px 8px 0 rgba(0, 0, 0, 0.2);">
+
+                        {% if not alb.random_img.image %}
+
+                            {% thumbnail 'media/empty-featured2-1.png' "450x300" crop="center" padding=True as im %}
+
+                                <h3 class="text-muted">{{ alb.album_name }} <span class="badge text-success" style="float: right; border-radius: 0 0 0 0">{{ alb.likes|default:0 }} likes</span></h3>
+
+
+                                <a href="{% url 'photolist' alb.id %}"> <img class="img-responsive"
+                                                                             src="{{ MEDIA_URL }}{{ im }}">
+                                </a>
+                                <div class="dropdown">
+                                    <button style="border-radius: 0 0 0 0"
+                                            class="btn btn-default dropdown-toggle btn-block " type="button"
+                                            data-toggle="dropdown">Edit album
+                                        <span class="glyphicon glyphicon-menu-down"></span></button>
+                                    <ul style="border-radius: 0 0 0 0" class="dropdown-menu btn-block">
+
+                                        <li><a data-toggle="modal" data-target="#addmodal{{ alb.id }}"><span
+                                                class="glyphicon glyphicon-camera"
+                                                style="float: right"></span>Add photo</a></li>
+
+                                        <li><a href="{% url 'editalbum' alb.id %}"><span class="glyphicon glyphicon-cog"
+                                                                                         style="float: right"></span>Edit</a>
+                                        </li>
+                                        <li><a name="delete" data-toggle="modal"
+                                               data-target="#myModal{{ alb.id }}"><span
+                                                class="glyphicon glyphicon-trash" style="float: right"> </span>Delete
+                                            album</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            {% endthumbnail %}
+                        {% else %}
+
+                            {% thumbnail alb.random_img.image "450x300" crop="center" padding=True as im %}
+                                <h3 class="text-muted">{{ alb.album_name }}<span class="badge" style="float: right; border-radius: 0 0 0 0;">{{ alb.likes|default:0 }} likes</span></h3>
+                                <a href="{% url 'photolist' alb.id %}"> <img class="img-responsive"
+                                                                             src="{{ MEDIA_URL }}{{ im }}">
+                                </a>
+
+
+                                <div class="dropdown">
+                                    <button style="border-radius: 0 0 0 0"
+                                            class="btn btn-default dropdown-toggle btn-block " type="button"
+                                            data-toggle="dropdown">Edit album
+                                        <span class="glyphicon glyphicon-menu-down"></span></button>
+                                    <ul style="border-radius: 0 0 0 0" class="dropdown-menu btn-block">
+
+                                        <li><a data-toggle="modal" data-target="#addmodal{{ alb.id }}"><span
+                                                class="glyphicon glyphicon-camera"
+                                                style="float: right"></span>Add photo</a>
+                                        </li>
+
+                                        <li><a href="{% url 'editalbum' alb.id %}"><span class="glyphicon glyphicon-cog"
+                                                                                         style="float: right"></span>Edit</a>
+                                        </li>
+
+                                        <li><a name="delete" data-toggle="modal"
+                                               data-target="#myModal{{ alb.id }}"><span
+                                                class="glyphicon glyphicon-trash" style="float: right"> </span>Delete
+                                            album</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            {% endthumbnail %}
+
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div id="myModal{{ alb.id }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+
+                            <div class="modal-body" style="text-align: center">
+                                <h2> Delete album "{{ alb.album_name }}"?</h2>
+                                <h3> Are you sure?</h3>
+
+                                <a href="{% url 'deletealbum' alb.id %}" class="btn btn-danger" role="button">Delete</a>
+                            </div>
+                            <br>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div id="addmodal{{ alb.id }}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-body" style="text-align: center">
+                                <form action="{% url 'add_photo_album' alb.id %}" method="post"
+                                      enctype="multipart/form-data">
+
+                                    {% csrf_token %}
+                                    <div class="form-group" style="text-align: center">
+                                        <div class="input-group">
+                                            <label class="input-group-btn">
+
+                                                <label class=" btn btn-default btn-file"> Choose photo
+                                                    <input class="hidden" type="file" name="photo" id="photo" multiple/>
+                                                </label>
+
+                                            </label>
+                                            <input placeholder="your photos" type="text" class="form-control" readonly>
+                                        </div>
+
+                                    </div>
+                                    <button type="submit" name="save" class="btn btn-success">Add photo</button>
+                                </form>
+                            </div>
+
+                        </div>
+                        <br>
+                    </div>
+                </div>
+
+
+
+            {% endfor %}
+        </div>
+        {% if is_paginated %}
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                    <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in paginator.page_range %}
+                    {% if page_obj.number == i %}
+                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                    <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+    <script>
+        $(function () {
+
+            // We can attach the `fileselect` event to all file inputs on the page
+            $(document).on('change', ':file', function () {
+                var input = $(this),
+                    numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                    label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                input.trigger('fileselect', [numFiles, label]);
+            });
+
+            // We can watch for our custom `fileselect` event like this
+            $(document).ready(function () {
+                $(':file').on('fileselect', function (event, numFiles, label) {
+
+                    var input = $(this).parents('.input-group').find(':text'),
+                        log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+                    if (input.length) {
+                        input.val(log);
+                    } else {
+                        if (log) alert(log);
+                    }
+
+                });
+            });
+
+        });
+    </script>
+{% endblock %}

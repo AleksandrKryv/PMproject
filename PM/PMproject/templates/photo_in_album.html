@@ -1,0 +1,179 @@
+{% extends "layout.html" %}
+{% load thumbnail %}
+{% load pm_extras %}
+
+{% block main %}
+
+    <div class="container">
+        <nav class="navbar navbar-default ">
+            <div class="container">
+                <ul class="nav navbar-nav ">
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h1>{{ album.user.username }}'s album</h1>
+
+
+        <br>
+        <h2>{{ album.album_name }}</h2>
+        <br><br>
+        <div class="row">
+            {% for photo in album.photo.all %}
+
+                <div class="col-sm-4">
+                    <div class="card ">
+                        {% thumbnail photo.image "450x300" crop="center" padding=True as im %}
+
+                            <a href="" data-toggle="modal" data-target="#myModal"> <img id="myImg"
+                                                                                        class="img-responsive"
+                                                                                        src="{{ MEDIA_URL }}{{ im }}">
+                            </a>
+                        {% endthumbnail %}
+
+
+                        {% if user|like_filter:photo %}
+                            <a class="dislike-btn" id="dislike{{ photo.id }}" style="text-decoration: none"
+                               href="{% url 'dislike' photo.id %}">
+
+                                <h4 class="text-success"
+                                    style="padding-right: 10px; padding-bottom: 5px; text-align: right">
+
+                                    <span class="like-counter"> {{ photo.likes }} </span>
+                                    <span class="span-icon text-danger glyphicon glyphicon-thumbs-down"
+                                          style="padding-left: 5px"></span>
+                                </h4>
+                            </a>
+                        {% else %}
+
+                            <a class="like-btn" id="like{{ photo.id }}" style="text-decoration: none"
+                               href="{% url 'like' photo.id %}">
+
+                                <h4 class="text-success"
+                                    style="padding-right: 10px; padding-bottom: 5px; text-align: right">
+                                    <span class="like-counter"> {{ photo.likes }} </span>
+                                    <span class="span-icon glyphicon glyphicon-thumbs-up"
+                                          style="padding-left: 5px"></span>
+                                </h4>
+                            </a>
+
+
+                        {% endif %}
+
+
+                    </div>
+                    <br>
+                </div>
+
+            {% endfor %}
+        </div>
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg" style="width: 70%">
+
+            <!-- Modal content-->
+            <div class="modal-content" style="border-radius: 0 0 0 0; vertical-align: middle">
+
+
+                <div data-interval="0" id="myCarousel" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+
+                        {% for photo in album.photo.all %}
+                            {% if forloop.counter is 1 %}
+                                <li class="active" data-target="#myCarousel" data-slide-to="0"></li>
+
+                            {% else %}
+                                <li data-target="#myCarousel" data-slide-to="{{ forloop.counter }}"></li>
+
+
+                            {% endif %}
+                        {% endfor %}
+                    </ol>
+
+                    <div class="card" style="box-shadow: 5px 6px 8px 0 rgba(0, 0, 0, 0.2);">
+
+                        <div class="carousel-inner" role="listbox">
+
+
+                            {% for photo in album.photo.all %}
+                                {% thumbnail photo.image "2560x1440" crop="center" as im %}
+                                    {% if forloop.counter is 1 %}
+                                        <div class="item active">
+                                    {% else %}
+                                        <div class="item">
+                                    {% endif %}
+                                <img style="width: 100%; " class="img-responsive" src="{{ MEDIA_URL }}{{ im }}">
+                                </div>
+                                {% endthumbnail %}
+                            {% endfor %}
+                            </div>
+
+                            <!-- Left and right controls -->
+                            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+                <br>
+                <br><br>
+
+
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $(function () {
+
+            // We can attach the `fileselect` event to all file inputs on the page
+            $(document).on('click', '.like-btn', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var spancounter = btn.find('.like-counter');
+                var span = btn.find('.span-icon');
+                 $.ajax({ url: btn.attr('href')}).done(function (data) {
+                        btn.removeClass('like-btn');
+                        btn.addClass('dislike-btn');
+                        span.removeClass('glyphicon-thumbs-up');
+                        span.addClass('glyphicon-thumbs-down text-danger');
+                        var counter = data.likes;
+                        spancounter.text(counter);
+                        btn.removeAttr('href');
+                        btn.attr('href', data.url);
+                             console.log('done')
+                         });
+
+                console.log('like')
+            });
+
+            $(document).on('click', '.dislike-btn', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var spancounter = btn.find('.like-counter');
+                var span = btn.find('.span-icon');
+                $.ajax({ url: btn.attr('href')}).done(function (data) {
+                        btn.removeClass('dislike-btn');
+                        btn.addClass('like-btn');
+                        span.removeClass('glyphicon-thumbs-down text-danger');
+                        span.addClass('glyphicon-thumbs-up');
+                        var counter = data.likes;
+                        spancounter.text(counter);
+                        btn.removeAttr('href');
+                        btn.attr('href', data.url);
+                             console.log('done')
+                         });
+                console.log('dislike')
+
+            });
+
+        });
+
+    </script>
+{% endblock %}
