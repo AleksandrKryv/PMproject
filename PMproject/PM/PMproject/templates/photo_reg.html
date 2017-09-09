@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block main %}
+<div class="container">
+        <nav class="navbar navbar-default ">
+            <div class="container">
+                <ul class="nav navbar-nav ">
+
+                    <li><a href="{% url 'extend' %}">General</a></li>
+                    <li><a href="{% url 'photographreg' %}">Photograph</a></li>
+                    <li><a href="{% url 'modelreg' %}">Model</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <form action="{% url 'photographreg'   %}" method="post">
+
+
+        {% csrf_token %}
+
+        <div class="container">
+            <h2>Photograph</h2>
+            <br><br>
+            <div class="form-group">
+                <label for="about">About:</label>
+                {{ form.about }}
+            </div>
+            <div class="form-group">
+                <label class="required" for="experience">Experience:</label>
+                {{ form.experience }}
+            </div>
+            <div class="form-group">
+                <label class="required" for="level">level:</label>
+                {{ form.level }}
+            </div>
+            <div class="form-group">
+                <label class="required" for="conditions">conditions:</label>
+                {{ form.conditions }}
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+
+
+
+
+    </form>
+
+{% endblock %}

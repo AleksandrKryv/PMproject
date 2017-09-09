@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+{% load thumbnail %}
+
+
+
+{% block main %}
+
+<div class="container">
+
+
+
+<div class="row">
+<div class="col-sm-8">
+<div class="row">
+{% for pmuser in pmuser_list %}
+
+
+
+<div class="col-sm-6">
+<div class="card" style="text-align: center; max-height: 100%">
+{% if not pmuser.photo.image %}
+ {% thumbnail 'media/empty-featured2-1.png' "360x300" crop="center" as im %}
+
+                      <a   href="{% url 'profile' pmuser.id %}">
+                          <img id="myImg" class="responsive"  src="{{ MEDIA_URL }}{{ im }}" >
+                                    </a>
+                                    {% endthumbnail %}
+
+{%  else %}
+{% thumbnail  pmuser.photo.image  "400x300" crop="center" as im %}
+
+ <a   href="{% url 'profile' pmuser.id %}">
+    <img id="myImg" data-toggle="modal" data-target="#myModal"
+         class="responsive " src="{{ MEDIA_URL }}{{ im }}" style="width: 100%; ">
+ </a>
+{% endthumbnail %}
+{% endif %}
+<span class="badge text-success" style="float: right; border-radius: 0 0 0 0">Rating - {{ pmuser.likes}} </span>
+    <h1>{{ pmuser.username }}</h1>
+     {% if pmuser.photograph and pmuser.model %}
+         <h3> <small> Photograph and Model </small></h3>
+    {% elif pmuser.model %}
+    <h3> <small> Model </small></h3>
+        {% elif pmuser.photograph %}
+        <h3> <small> Photograph </small></h3>
+
+
+        {% else %}
+                 <h3> <small> Commentator </small></h3>
+
+    {% endif %}
+{% if pmuser.city %}
+    <h4> From {{ pmuser.city }}  </h4>
+{% else %}
+
+{% endif %}
+    <a href="#"><i class="fa fa-vk"></i></a>
+    <a href="#"><i class="fa fa-twitter"></i></a>
+    <a href="#"><i class="fa fa-linkedin"></i></a>
+    <a href="#"><i class="fa fa-facebook"></i></a>
+<br>
+    <p><button style="color: black; border-radius: 0 0 0 0 " class="btn btn-default">Contact</button></p>
+    <br>
+</div>
+<br>
+</div>
+
+
+
+
+{% endfor %}
+ </div>
+</div>
+<div class="col-sm-4">
+
+</div>
+</div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+{% load thumbnail %}
+
+{% block main %}
+    <div class="container">
+        <nav class="navbar navbar-default ">
+            <div class="container">
+                <ul class="nav navbar-nav ">
+                    <li><a href="" onClick="javascript:history.go(-1);">Back</a></li>
+                    <li><a href="">Back</a></li>
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <form action="{% url 'portfolioalb' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+
+            {% for alb in album_list %}
+                <div class="col-sm-4">
+                    <div class="checkbox">
+                        <label>
+                            <input style=" margin-top: 60px" type="checkbox" name="albumschoice" value="{{ alb.id }}" id="alb_{{ alb.id }}">
+                            <div class="card" style="box-shadow: 5px 6px 8px 0 rgba(0, 0, 0, 0.2);">
+
+                                {% if not alb.random_img.image %}
+
+
+                                    {% thumbnail 'media/empty-featured2-1.png' "450x300" crop="center" padding=True as im %}
+                                        <h3 class="text-muted">{{ alb.album_name }}</h3>
+                                        <img class="img-responsive"
+                                             src="{{ MEDIA_URL }}{{ im }}">
+
+
+                                    {% endthumbnail %}
+
+                                {% else %}
+
+
+
+                                    {% thumbnail alb.random_img.image "450x300" crop="center" padding=True as im %}
+
+                                        <h3 style="text-align: left; margin-left: 20px"
+                                            class="text-muted">{{ alb.album_name }}</h3>
+
+
+                                        <img class="img-responsive" src="{{ MEDIA_URL }}{{ im }}">
+
+
+
+
+
+                                    {% endthumbnail %}
+
+
+
+                                {% endif %}
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+            <div>
+                <button  type="submit" name="add" class="btn btn-success">Add photo</button>
+            </div>
+</div>
+
+    </form>
+{% endblock %}

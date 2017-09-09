@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+    <form action="{% url 'registration' %}" method="post">
+
+
+        {% csrf_token %}
+
+        <div class="container">
+            <h2>Registration</h2>
+            <br>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                {{ form.username }}
+
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone number:</label>
+                {{ form.phone_number }}
+                {% if form.phone_number.errors %}
+                    {% for error in form.phone_number.errors %}
+                        <div class="alert alert-danger">
+
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+    </form>
+
+{% endblock %}
+
+
+
+
+
+
+
